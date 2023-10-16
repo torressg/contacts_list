@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart' as pathPackage;
+import 'package:path/path.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 class AddContact extends StatefulWidget {
   const AddContact({super.key});
@@ -10,12 +15,15 @@ class AddContact extends StatefulWidget {
 
 class _AddContactState extends State<AddContact> {
   final ImagePicker _picker = ImagePicker();
+  XFile? selectedImage;
+  TextEditingController nomeContato = TextEditingController();
+  TextEditingController numContato = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Adicionar Contato"),
+        title: const Text("Cadastre um novo contato"),
       ),
       body: Container(
         child: Column(
@@ -24,41 +32,66 @@ class _AddContactState extends State<AddContact> {
               height: 20,
             ),
             IconButton(
-                iconSize: 100,
-                alignment: Alignment.center,
-                onPressed: () async {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (_) {
-                        return Wrap(
-                          children: [
-                            ListTile(
-                              leading: Icon(Icons.camera),
-                              title: Text("Câmera"),
-                              onTap: () async {
-                                final XFile? photo = await _picker.pickImage(
-                                    source: ImageSource.camera);
-                              },
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.photo_library),
-                              title: Text("Galeria"),
-                              onTap: () async {
-                                final XFile? image = await _picker.pickImage(
-                                    source: ImageSource.gallery);
-                              },
-                            )
-                          ],
-                        );
-                      });
-                },
-                icon: Icon(size: 100, Icons.camera_alt)),
+              icon: selectedImage == null
+                  ? Icon(Icons.camera_alt, size: 100)
+                  : ClipOval(
+                      child: Image.file(File(selectedImage!.path),
+                      fit: BoxFit.cover,
+                      height: 120,
+                      width: 120,)
+                    ),
+              iconSize: 100,
+              alignment: Alignment.center,
+              onPressed: () async {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (_) {
+                      return Wrap(
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.camera),
+                            title: Text("Câmera"),
+                            onTap: () async {
+                              final XFile? photo = await _picker.pickImage(
+                                  source: ImageSource.camera);
+                              if (photo != null) {
+                                String path = (await pathPackage
+                                        .getApplicationDocumentsDirectory())
+                                    .path;
+                                String name = basename(photo.path);
+                                await photo.saveTo("$path/$name");
+                                await GallerySaver.saveImage(photo.path);
+                                setState(() {
+                                  selectedImage = photo;
+                                });
+                              }
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.photo_library),
+                            title: Text("Galeria"),
+                            onTap: () async {
+                              final XFile? image = await _picker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (image != null) {
+                                setState(() {
+                                  selectedImage = image;
+                                });
+                              }
+                            },
+                          )
+                        ],
+                      );
+                    });
+              },
+            ),
             SizedBox(
               height: 15,
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextFormField(
+                controller: nomeContato,
                 decoration: const InputDecoration(
                     labelText: "Nome do contato",
                     hintText: "Digite o nome do contato.",
@@ -69,6 +102,7 @@ class _AddContactState extends State<AddContact> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextFormField(
+                controller: numContato,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
                     labelText: "Número do contato",
@@ -79,7 +113,10 @@ class _AddContactState extends State<AddContact> {
             ),
             Container(
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print(numContato.text);
+                    print(nomeContato.text);
+                  },
                   child: Text(
                     "SALVAR",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
