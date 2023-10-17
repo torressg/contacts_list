@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lista_contatos/repositories/contact_repository.dart';
 import 'package:path_provider/path_provider.dart' as pathPackage;
 import 'package:path/path.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -15,9 +15,11 @@ class AddContact extends StatefulWidget {
 
 class _AddContactState extends State<AddContact> {
   final ImagePicker _picker = ImagePicker();
+  var ContactRep = ContactsRepository();
   XFile? selectedImage;
   TextEditingController nomeContato = TextEditingController();
   TextEditingController numContato = TextEditingController();
+  String pathImage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +37,12 @@ class _AddContactState extends State<AddContact> {
               icon: selectedImage == null
                   ? Icon(Icons.camera_alt, size: 100)
                   : ClipOval(
-                      child: Image.file(File(selectedImage!.path),
+                      child: Image.file(
+                      File(selectedImage!.path),
                       fit: BoxFit.cover,
                       height: 120,
-                      width: 120,)
-                    ),
+                      width: 120,
+                    )),
               iconSize: 100,
               alignment: Alignment.center,
               onPressed: () async {
@@ -113,9 +116,10 @@ class _AddContactState extends State<AddContact> {
             ),
             Container(
               child: TextButton(
-                  onPressed: () {
-                    print(numContato.text);
-                    print(nomeContato.text);
+                  onPressed: () async{
+                    pathImage = selectedImage!.path;
+                    await ContactRep.AddContact(nomeContato.text, numContato.text, pathImage);
+                    print('foi');
                   },
                   child: Text(
                     "SALVAR",
