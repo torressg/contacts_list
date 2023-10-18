@@ -78,6 +78,7 @@ class _ContacListState extends State<ContacList> {
                     nomeContato[contactIndex],
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
+                  subtitle: Text(numContato[contactIndex]),
                   onTap: () {
                     Navigator.push(
                       context,
