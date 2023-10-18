@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lista_contatos/models/contact_model.dart';
+import 'package:lista_contatos/pages/add_contact.dart';
 import 'package:lista_contatos/repositories/contact_repository.dart';
 
 class ContacList extends StatefulWidget {
@@ -20,14 +21,15 @@ class _ContacListState extends State<ContacList> {
   int lenghtContactList = 0;
 
   Future<void> listContacts() async {
-   ContactModel result = await ContactRep.get();
-   setState(() {
+    ContactModel result = await ContactRep.get();
+    setState(() {
       lenghtContactList = result.results.length;
       nomeContato = result.results.map((item) => item.nomeContato).toList();
       numContato = result.results.map((item) => item.numeroContato).toList();
       imagemContato = result.results.map((item) => item.imagemContato).toList();
-   });
+    });
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -43,13 +45,46 @@ class _ContacListState extends State<ContacList> {
       ),
       body: Container(
           child: ListView.builder(
-              itemCount: lenghtContactList,
+              itemCount: lenghtContactList + 1,
               itemBuilder: (BuildContext context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    leading: Icon(Icons.add, size: 35),
+                    title: Text('Adicionar novo contato'),
+                    onTap: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddContact()),
+                    );
+                    },
+                  );
+                }
+                int contactIndex = index - 1;
                 return ListTile(
-                  leading: imagemContato[index]!="sem imagem" ? Image.file(File(imagemContato[index]), fit: BoxFit.cover,) : Icon(Icons.person),
-                  title: Text(nomeContato[index]),
-                  trailing: Text("teste"),
-                  onTap: () {},
+                  leading: imagemContato[contactIndex] != "sem imagem"
+                      ? ClipOval(
+                          child: Image.file(
+                          File(imagemContato[contactIndex]),
+                          fit: BoxFit.cover,
+                          height: 40,
+                          width: 40,
+                        ))
+                      : Icon(
+                          Icons.person,
+                          size: 35,
+                        ),
+                  title: Text(
+                    nomeContato[contactIndex],
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddContact()),
+                    );
+                  },
                 );
               })),
     );

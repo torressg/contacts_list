@@ -119,7 +119,6 @@ class _AddContactState extends State<AddContact> {
                   onPressed: () async{
                     pathImage = selectedImage!.path;
                     await ContactRep.AddContact(nomeContato.text, numContato.text, pathImage);
-                    print('foi');
                   },
                   child: Text(
                     "SALVAR",
