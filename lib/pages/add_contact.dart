@@ -5,6 +5,7 @@ import 'package:lista_contatos/repositories/contact_repository.dart';
 import 'package:path_provider/path_provider.dart' as pathPackage;
 import 'package:path/path.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class AddContact extends StatefulWidget {
   const AddContact({super.key});
@@ -24,6 +25,11 @@ class _AddContactState extends State<AddContact> {
 
   @override
   Widget build(BuildContext context) {
+    var numberFormatter = MaskTextInputFormatter(
+        mask: '+## #####-####',
+        filter: {"#": RegExp(r'[0-9]')},
+        type: MaskAutoCompletionType.lazy);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cadastre um novo contato"),
@@ -111,6 +117,7 @@ class _AddContactState extends State<AddContact> {
                   margin:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   child: TextFormField(
+                    inputFormatters: [numberFormatter],
                     controller: numContato,
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
