@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lista_contatos/models/contact_model.dart';
 import 'package:lista_contatos/pages/add_contact.dart';
+import 'package:lista_contatos/pages/info_contact.dart';
 import 'package:lista_contatos/repositories/contact_repository.dart';
 
 class ContacList extends StatefulWidget {
@@ -53,10 +54,10 @@ class _ContacListState extends State<ContacList> {
                     title: Text('Adicionar novo contato'),
                     onTap: () {
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddContact()),
-                    );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddContact()),
+                      );
                     },
                   );
                 }
@@ -81,10 +82,11 @@ class _ContacListState extends State<ContacList> {
                   subtitle: Text(numContato[contactIndex]),
                   onTap: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AddContact()),
-                    );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              InfoContact(nomeContato: nomeContato[contactIndex]),
+                        ));
                   },
                 );
               })),
