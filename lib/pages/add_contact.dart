@@ -131,7 +131,7 @@ class _AddContactState extends State<AddContact> {
                 Container(
                   child: TextButton(
                       onPressed: () async {
-                        FocusScope.of(context).unfocus();
+                        Navigator.pop(context, 'success');
                         setState(() {
                           isLoading = true;
                         });

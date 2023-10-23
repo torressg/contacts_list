@@ -44,52 +44,60 @@ class _ContacListState extends State<ContacList> {
       appBar: AppBar(
         title: Text('Contatos'),
       ),
-      body: Container(
-          child: ListView.builder(
-              itemCount: lenghtContactList + 1,
-              itemBuilder: (BuildContext context, index) {
-                if (index == 0) {
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await listContacts();
+        },
+        child: Container(
+            child: ListView.builder(
+                itemCount: lenghtContactList + 1,
+                itemBuilder: (BuildContext context, index) {
+                  if (index == 0) {
+                    return ListTile(
+                      leading: Icon(Icons.add, size: 35),
+                      title: Text('Adicionar novo contato'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddContact()),
+                        );
+                      },
+                    );
+                  }
+                  int contactIndex = index - 1;
                   return ListTile(
-                    leading: Icon(Icons.add, size: 35),
-                    title: Text('Adicionar novo contato'),
+                    leading: imagemContato[contactIndex] != "sem imagem"
+                        ? ClipOval(
+                            child: Image.file(
+                            File(imagemContato[contactIndex]),
+                            fit: BoxFit.cover,
+                            height: 40,
+                            width: 40,
+                          ))
+                        : Icon(
+                            Icons.person,
+                            size: 35,
+                          ),
+                    title: Text(
+                      nomeContato[contactIndex],
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(numContato[contactIndex]),
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddContact()),
-                      );
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InfoContact(
+                              imgSrc: imagemContato[contactIndex],
+                              nomeContato: nomeContato[contactIndex],
+                              numeroContato: numContato[contactIndex],
+                            ),
+                          ));
                     },
                   );
-                }
-                int contactIndex = index - 1;
-                return ListTile(
-                  leading: imagemContato[contactIndex] != "sem imagem"
-                      ? ClipOval(
-                          child: Image.file(
-                          File(imagemContato[contactIndex]),
-                          fit: BoxFit.cover,
-                          height: 40,
-                          width: 40,
-                        ))
-                      : Icon(
-                          Icons.person,
-                          size: 35,
-                        ),
-                  title: Text(
-                    nomeContato[contactIndex],
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  subtitle: Text(numContato[contactIndex]),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              InfoContact(nomeContato: nomeContato[contactIndex]),
-                        ));
-                  },
-                );
-              })),
+                })),
+      ),
     );
   }
 }
