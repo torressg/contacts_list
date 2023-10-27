@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:lista_contatos/pages/edit_contact.dart';
+import 'package:lista_contatos/repositories/contact_repository.dart';
 
-class InfoContact extends StatefulWidget {
+class EditContactPage extends StatefulWidget {
   final Key? key;
   final String nomeContato;
   final String numeroContato;
   final String imgSrc;
   final String contatoId;
 
-  InfoContact(
+  EditContactPage(
       {this.key,
       required this.imgSrc,
       required this.nomeContato,
@@ -18,38 +18,36 @@ class InfoContact extends StatefulWidget {
       required this.contatoId});
 
   @override
-  State<InfoContact> createState() => _InfoContactState();
+  State<EditContactPage> createState() => _EditContactPageState();
 }
 
-class _InfoContactState extends State<InfoContact> {
+class _EditContactPageState extends State<EditContactPage> {
+  var ContactRep = ContactsRepository();
+  TextEditingController nomeContato = TextEditingController();
+  TextEditingController numContato = TextEditingController();
+
+  Future<void> EditContact() async {
+    await ContactRep.EditContact(
+        nomeContato.text, numContato.text, widget.contatoId);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    nomeContato.text = widget.nomeContato;
+    numContato.text = widget.numeroContato;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Informação do contato'),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditContactPage(
-                                imgSrc: widget.imgSrc,
-                                nomeContato: widget.nomeContato,
-                                numeroContato: widget.numeroContato,
-                                contatoId: widget.contatoId,
-                              )),
-                    );
-                  });
-                },
-                icon: Icon(Icons.edit))
-          ],
+          title: const Text('Editar contato'),
         ),
         body: Container(
           alignment: Alignment.center,
           child: Column(children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             ClipOval(
@@ -62,8 +60,7 @@ class _InfoContactState extends State<InfoContact> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextFormField(
-                initialValue: widget.nomeContato,
-                enabled: false,
+                controller: nomeContato,
                 decoration: const InputDecoration(
                     labelText: "Nome do contato",
                     border: OutlineInputBorder(
@@ -73,8 +70,7 @@ class _InfoContactState extends State<InfoContact> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextFormField(
-                initialValue: widget.numeroContato,
-                enabled: false,
+                controller: numContato,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
                     labelText: "Número do contato",
@@ -85,24 +81,40 @@ class _InfoContactState extends State<InfoContact> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: TextButton(
-                  onPressed: () {},
-                  child: Row(
+                  onPressed: () async {
+                    await EditContact();
+                  },
+                  style: const ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll<Color>(Colors.blue),
+                      alignment: Alignment.center),
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.phone, color: Colors.white),
-                      SizedBox(
-                        width: 5,
-                      ),
                       Text(
-                        "Ligar",
+                        "Salvar",
                         style: TextStyle(color: Colors.white),
                       )
                     ],
-                  ),
-                  style: ButtonStyle(
+                  )),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: TextButton(
+                  onPressed: () {},
+                  style: const ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll<Color>(Colors.green),
-                      alignment: Alignment.center)),
+                          MaterialStatePropertyAll<Color>(Colors.red),
+                      alignment: Alignment.center),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Excluir",
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ],
+                  )),
             )
           ]),
         ));

@@ -18,6 +18,8 @@ class _ContacListState extends State<ContacList> {
   List<String> nomeContato = [];
   List<String> numContato = [];
   List<String> imagemContato = [];
+  List<String> contatoId = [];
+
 
   int lenghtContactList = 0;
 
@@ -28,6 +30,7 @@ class _ContacListState extends State<ContacList> {
       nomeContato = result.results.map((item) => item.nomeContato).toList();
       numContato = result.results.map((item) => item.numeroContato).toList();
       imagemContato = result.results.map((item) => item.imagemContato).toList();
+      contatoId = result.results.map((item) => item.objectId).toList();
     });
   }
 
@@ -92,6 +95,7 @@ class _ContacListState extends State<ContacList> {
                               imgSrc: imagemContato[contactIndex],
                               nomeContato: nomeContato[contactIndex],
                               numeroContato: numContato[contactIndex],
+                              contatoId: contatoId[contactIndex],
                             ),
                           ));
                     },

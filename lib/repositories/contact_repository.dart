@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lista_contatos/models/contact_model.dart';
+import 'package:lista_contatos/pages/edit_contact.dart';
 
 class ContactsRepository {
   String appId = (dotenv.env['APP_ID']).toString();
@@ -38,6 +39,27 @@ class ContactsRepository {
     };
     try {
       await dio.post(address, data: dataSent);
+    } catch (e) {
+      print("Erro: ${e}");
+    }
+  }
+
+  Future<void> EditContact(
+      String nome_contato, String num_contato, String contatoId) async {
+    dio.options.headers = {
+      "X-Parse-Application-Id": appId,
+      "X-Parse-REST-API-Key": appKey,
+      "Content-Type": "application/json"
+    };
+    String fullAdress = "$address/$contatoId";
+    var dataSent = {
+      "nome_contato": nome_contato,
+      "numero_contato": num_contato,
+    };
+    try {
+      await dio.put(fullAdress, data: dataSent);
+      print(dataSent);
+
     } catch (e) {
       print("Erro: ${e}");
     }
